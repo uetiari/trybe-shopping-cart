@@ -24,9 +24,9 @@ function createProductItemElement({ sku, name, image }) {
   return section;
 }
 
-// function getSkuFromProductItem(item) {
-//   return item.querySelector('span.item__sku').innerText;
-// }
+function getSkuFromProductItem(item) {
+  return item.querySelector('span.item__sku').innerText;
+}
 
 async function getProductsApi(product) {
   const response = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${product}`);
@@ -47,18 +47,18 @@ async function getProductsApi(product) {
 // consultei o github da Beatriz Ribeiro porque meus produtos não estavam aparecendo, mas olhando o que ela fez, percebi que minhas linhas 41 e 42 estavam fora do escopo e por isso estava undefined.
 // https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
-// function cartItemClickListener() {
-//   // coloque seu código aqui
-//   // param event
-// }
+function cartItemClickListener() {
+  // coloque seu código aqui
+  // param event
+}
 
-// function createCartItemElement({ sku, name, salePrice }) {
-//   const li = document.createElement('li');
-//   li.className = 'cart__item';
-//   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-//   li.addEventListener('click', cartItemClickListener);
-//   return li;
-// }
+function createCartItemElement({ sku, name, salePrice }) {
+  const li = document.createElement('li');
+  li.className = 'cart__item';
+  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
+  li.addEventListener('click', cartItemClickListener);
+  return li;
+}
 
 window.onload = () => {
   getProductsApi('computador');
