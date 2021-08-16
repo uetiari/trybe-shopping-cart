@@ -47,9 +47,8 @@ async function getProductsApi(product) {
 // consultei o github da Beatriz Ribeiro porque meus produtos não estavam aparecendo, mas olhando o que ela fez, percebi que minhas linhas 41 e 42 estavam fora do escopo e por isso estava undefined.
 // https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
-function cartItemClickListener() {
+function cartItemClickListener(event) {
   // coloque seu código aqui
-  // param event
 }
 
 function createCartItemElement({ sku, name, salePrice }) {
