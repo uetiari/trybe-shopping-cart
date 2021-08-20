@@ -1,65 +1,83 @@
 function createProductImageElement(imageSource) {
-  const img = document.createElement('img');
-  img.className = 'item__image';
-  img.src = imageSource;
-  return img;
+  const img = document.createElement('img'); // cria uma img
+  img.className = 'item__image'; // dá uma classe a imagem
+  img.src = imageSource; // atribui ao param a imagem com classe
+  return img; // retorna a imagem completa
 }
 
 function createCustomElement(element, className, innerText) {
-  const e = document.createElement(element);
-  e.className = className;
-  e.innerText = innerText;
-  return e;
+  const e = document.createElement(element); // cria um elemento
+  e.className = className; // atribui classe ao elemento
+  e.innerText = innerText; // colocar o texto ao elemento
+  return e; // retorna o elemento com as propriedades criadas.
 }
 
 function createProductItemElement({ sku, name, image }) {
-  const section = document.createElement('section');
-  section.className = 'item';
+  const section = document.createElement('section'); // cria um elemento section
+  section.className = 'item'; // adiciona uma classe item
   
-  section.appendChild(createCustomElement('span', 'item__sku', sku));
+  section.appendChild(createCustomElement('span', 'item__sku', sku)); // 
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
   section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-
-  return section;
+// dá os appends nas coisas todas pra virar um produto por completo 
+  return section; // retorna tudo formatado
 }
 
-// function getSkuFromProductItem(item) {
-//   return item.querySelector('span.item__sku').innerText;
-// }
+function getSkuFromProductItem(item) {
+  return item.querySelector('span.item__sku').innerText; // retorna o id do produto e insere no html
+}
 
-async function getProductsApi(prod) {
-  const response = await fetch(`https://api.mercadolibre.com/sites/MLB/search?q=${prod}`);
-  await response.json()
-    .then((data) => data.results.forEach((obj) => {
-      const product = {
+function cartItemClickListener() {
+  // adicione seu código aqui
+}
+
+function createCartItemElement({ id: sku, title: name, price: salePrice }) {
+  const li = document.createElement('li'); // cria item da lista
+  li.className = 'cart__item'; // adiciona classe nele
+  li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`; // formata o jeito que tem que ser o item da lista
+  li.addEventListener('click', cartItemClickListener); // quando clicar no botão verde do produto
+  return li; // retorna o item da lista
+}
+
+async function carProducts(sku) {
+  const respCart = await fetch(`https://api.mercadolibre.com/items/${sku}`);
+  await respCart.json()
+  .then((data) => {  
+    const datas = { 
+      id: data.id,
+      title: data.title,
+      price: data.price,
+    };
+    const cartItems = document.querySelector('.cart__items'); 
+    cartItems.appendChild(createCartItemElement(datas));
+  });
+}
+// Repo Icaro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/36/
+  document.addEventListener('click', (event) => {
+  if (event.target.className === 'item__add') {
+    carProducts(getSkuFromProductItem(event.target.parentElement));
+    }
+    // console.log(event.target.parentElement);
+});
+
+async function getProductsApi() {
+  const response = await fetch('https://api.mercadolibre.com/sites/MLB/search?q=$computador'); // pega api
+  await response.json() // tranforma os dados em json
+    .then((data) => data.results.forEach((obj) => { // com json acima criar um produto para cada obj 
+      const product = { // usa esse formato pro novo objeto
         sku: obj.id,
         name: obj.title,
         image: obj.thumbnail,
       };
-      const ol = document.querySelector('.items');
-      ol.appendChild(createProductItemElement(product));
-      console.log(product);
+      const ol = document.querySelector('.items'); // pega a div com classe items
+      ol.appendChild(createProductItemElement(product)); // adiciona o resultado acima na div formando uma lista
     }));
   // const ol = document.querySelector('.items');
   // ol.appendChild(createProductItemElement(product));
-  return response;
 }
-// consultei o github da Beatriz Ribeiro porque meus produtos não estavam aparecendo, mas olhando o que ela fez, percebi que minhas linhas 41 e 42 estavam fora do escopo e por isso estava undefined.
-// https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
-
-// function cartItemClickListener(event) {
-//   // coloque seu código aqui
-// }
-
-// function createCartItemElement({ sku, name, salePrice }) {
-//   const li = document.createElement('li');
-//   li.className = 'cart__item';
-//   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`;
-//   li.addEventListener('click', cartItemClickListener);
-//   return li;
-// }
+// Repo Beatriz Ribeiro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
 window.onload = () => {
-  getProductsApi('computador');
+  getProductsApi();
 };
