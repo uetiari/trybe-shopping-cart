@@ -28,8 +28,8 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText; // retorna o id do produto e insere no html
 }
 
-function cartItemClickListener() {
-  // adicione seu código aqui
+function cartItemClickListener(event) {
+  event.target.remove();
 }
 
 function createCartItemElement({ id: sku, title: name, price: salePrice }) {
@@ -40,7 +40,7 @@ function createCartItemElement({ id: sku, title: name, price: salePrice }) {
   return li; // retorna o item da lista
 }
 
-async function carProducts(sku) {
+async function carProducts(sku) { // mesma lógica da função getProductsApi
   const respCart = await fetch(`https://api.mercadolibre.com/items/${sku}`);
   await respCart.json()
   .then((data) => {  
