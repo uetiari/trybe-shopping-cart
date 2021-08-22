@@ -29,7 +29,7 @@ function getSkuFromProductItem(item) {
 }
 
 function cartItemClickListener(event) {
-  event.target.remove();
+  event.target.remove(); // remove o item do carrinho de compras ao clicar nele
 }
 
 function createCartItemElement({ id: sku, title: name, price: salePrice }) {
@@ -78,6 +78,16 @@ async function getProductsApi() {
 }
 // Repo Beatriz Ribeiro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
+const clearBtn = document.querySelector('.empty-cart'); // pega botão do HTML
+function clearCart() {
+  const fullCart = document.querySelector('.cart__items'); // pega os itens do carrinho (ol do HTML)
+  fullCart.innerHTML = ''; // atirbui string vazia para deixar sem itens
+}
+function emptyCart() {
+  clearBtn.addEventListener('click', clearCart); // quando clicar no botão aciona função acima
+}
+
 window.onload = () => {
   getProductsApi();
+  emptyCart();
 };
