@@ -31,7 +31,7 @@ function getSkuFromProductItem(item) {
 
 function loading() {
   const section = document.createElement('section');
-  section.className = 'loading'; // 
+  section.className = 'loading';
   section.innerText = 'Loading...';
   const items = document.querySelector('.items');
   items.appendChild(section);
@@ -41,16 +41,24 @@ function deleteLoad() {
   const del = document.querySelector('.loading');
   del.remove();
 }
+function savedLocalStorage() { // função que salva no Local Storage
+  localStorage.setItem('Saved', itemsCart.innerHTML); // salva com chave Saved e valor os itens do carrinho
+}
+function loadLocalStorage() { // função que carrega no localStorage
+  itemsCart.innerHTML = localStorage.getItem('Saved'); // carrega através da chave Saved
+}
 
 function cartItemClickListener(event) {
   event.target.remove(); // remove o item do carrinho de compras ao clicar nele
+  savedLocalStorage();
 }
+
+itemsCart.addEventListener('click', cartItemClickListener); // aciona a função pra funcionar o LocalStorage tb!
 
 function createCartItemElement({ id: sku, title: name, price: salePrice }) { // 
   const li = document.createElement('li'); // cria item da lista
   li.className = 'cart__item'; // adiciona classe nele
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`; // formata o jeito que tem que ser o item da lista
-  li.addEventListener('click', cartItemClickListener); // quando clicar no botão verde do produto
   return li; // retorna o item da lista
 }
 
@@ -64,7 +72,8 @@ async function carProducts(sku) { // mesma lógica da função getProductsApi
       price: data.price,
     };
     itemsCart.appendChild(createCartItemElement(datas));
-  });  
+  });
+  savedLocalStorage(); 
 }
 // Repo Icaro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/36/
   document.addEventListener('click', (event) => {
@@ -87,19 +96,21 @@ async function getProductsApi() {
       const ol = document.querySelector('.items'); // pega a div com classe items
       ol.appendChild(createProductItemElement(product)); // adiciona o resultado acima na div formando uma lista
     }))
-    .then(() => { deleteLoad(); }); // deleta o loading
+    .then(() => { deleteLoad(); });
   // const ol = document.querySelector('.items');
   // ol.appendChild(createProductItemElement(product));
 }
 // Repo Beatriz Ribeiro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
 function clearCart() {
-  itemsCart.innerHTML = ''; // atirbui string vazia para deixar sem itens
+  itemsCart.innerHTML = ''; // atribui string vazia para deixar sem itens
+  savedLocalStorage();
 }
 const clearBtn = document.querySelector('.empty-cart'); // pega botão do HTML
 clearBtn.addEventListener('click', clearCart); // quando clicado aciona função acima.
 
 window.onload = () => {
   getProductsApi();
-  clearCart();
+  // clearCart(); // chamando antes o localStorage não funciona
+  loadLocalStorage();
 };
