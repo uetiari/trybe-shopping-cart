@@ -1,3 +1,5 @@
+const itemsCart = document.querySelector('.cart__items');
+
 function createProductImageElement(imageSource) {
   const img = document.createElement('img'); // cria uma img
   img.className = 'item__image'; // dá uma classe a imagem
@@ -19,8 +21,7 @@ function createProductItemElement({ sku, name, image }) {
   section.appendChild(createCustomElement('span', 'item__sku', sku)); // 
   section.appendChild(createCustomElement('span', 'item__title', name));
   section.appendChild(createProductImageElement(image));
-  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!'));
-// dá os appends nas coisas todas pra virar um produto por completo 
+  section.appendChild(createCustomElement('button', 'item__add', 'Adicionar ao carrinho!')); // dá os appends nas coisas todas pra virar um produto por completo 
   return section; // retorna tudo formatado
 }
 
@@ -28,11 +29,24 @@ function getSkuFromProductItem(item) {
   return item.querySelector('span.item__sku').innerText; // retorna o id do produto e insere no html
 }
 
+function loading() {
+  const section = document.createElement('section');
+  section.className = 'loading'; // 
+  section.innerText = 'Loading...';
+  const items = document.querySelector('.items');
+  items.appendChild(section);
+}
+
+function deleteLoad() {
+  const del = document.querySelector('.loading');
+  del.remove();
+}
+
 function cartItemClickListener(event) {
   event.target.remove(); // remove o item do carrinho de compras ao clicar nele
 }
 
-function createCartItemElement({ id: sku, title: name, price: salePrice }) {
+function createCartItemElement({ id: sku, title: name, price: salePrice }) { // 
   const li = document.createElement('li'); // cria item da lista
   li.className = 'cart__item'; // adiciona classe nele
   li.innerText = `SKU: ${sku} | NAME: ${name} | PRICE: $${salePrice}`; // formata o jeito que tem que ser o item da lista
@@ -49,9 +63,8 @@ async function carProducts(sku) { // mesma lógica da função getProductsApi
       title: data.title,
       price: data.price,
     };
-    const cartItems = document.querySelector('.cart__items'); 
-    cartItems.appendChild(createCartItemElement(datas));
-  });
+    itemsCart.appendChild(createCartItemElement(datas));
+  });  
 }
 // Repo Icaro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/36/
   document.addEventListener('click', (event) => {
@@ -62,6 +75,7 @@ async function carProducts(sku) { // mesma lógica da função getProductsApi
 });
 
 async function getProductsApi() {
+  loading(); // chama a função loading enquanto não vem resultado da API
   const response = await fetch('https://api.mercadolibre.com/sites/MLB/search?q=$computador'); // pega api
   await response.json() // tranforma os dados em json
     .then((data) => data.results.forEach((obj) => { // com json acima criar um produto para cada obj 
@@ -72,22 +86,20 @@ async function getProductsApi() {
       };
       const ol = document.querySelector('.items'); // pega a div com classe items
       ol.appendChild(createProductItemElement(product)); // adiciona o resultado acima na div formando uma lista
-    }));
+    }))
+    .then(() => { deleteLoad(); }); // deleta o loading
   // const ol = document.querySelector('.items');
   // ol.appendChild(createProductItemElement(product));
 }
 // Repo Beatriz Ribeiro https://github.com/tryber/sd-014-b-project-shopping-cart/pull/52/
 
-const clearBtn = document.querySelector('.empty-cart'); // pega botão do HTML
 function clearCart() {
-  const fullCart = document.querySelector('.cart__items'); // pega os itens do carrinho (ol do HTML)
-  fullCart.innerHTML = ''; // atirbui string vazia para deixar sem itens
+  itemsCart.innerHTML = ''; // atirbui string vazia para deixar sem itens
 }
-function emptyCart() {
-  clearBtn.addEventListener('click', clearCart); // quando clicar no botão aciona função acima
-}
+const clearBtn = document.querySelector('.empty-cart'); // pega botão do HTML
+clearBtn.addEventListener('click', clearCart); // quando clicado aciona função acima.
 
 window.onload = () => {
   getProductsApi();
-  emptyCart();
+  clearCart();
 };
